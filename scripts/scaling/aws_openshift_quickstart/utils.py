@@ -619,32 +619,46 @@ class LocalASG(object):
                 continue
             _ihd = {
                 'instance_id': instance_id,
-                'openshift_node_labels': {
-                    'application_node': 'yes',
-                    'registry_node': 'yes',
-                    'router_node': 'yes',
-                    'region': 'infra',
-                    'zone': 'default'
-                }
+                # 'openshift_node_labels': {
+                #     'application_node': 'yes',
+                #     'registry_node': 'yes',
+                #     'router_node': 'yes',
+                #     'region': 'infra',
+                #     'zone': 'default'
+                # }
             }
 
             if 'master' in self.openshift_config_category:
                 _ihd.update({
                     'openshift_schedulable': 'true',
-                    'openshift_node_labels': {
-                        'region': 'primary',
-                        'zone': 'default'
-                    }
+                    'openshift_node_group_name': 'node-config-master',
+                    # 'openshift_node_groups':[{'name':'node-config-master', 'labels':['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true','region=primary', 'zone=default']}],
+                    # 'openshift_node_labels': {
+                    #     'region': 'primary',
+                    #     'zone': 'default'
+                    # }
                 })
                 if self.elb_name:
                     # openshift_public_hostname is only needed if we're dealing with masters, and an ELB is present.
                     _ihd['openshift_public_hostname'] = self.elb_name
-
+            elif 'node' in self.openshift_config_category:
+                _ihd.update({
+                    'openshift_node_group_name': 'node-config-compute', 
+                    # 'openshift_node_groups':[{'name':'node-config-compute', 'labels':['node-role.kubernetes.io/compute=true','application_node=yes']}],       
+                })
+            # elif 'etcd' in self.openshift_config_category:
             elif 'node' not in self.openshift_config_category:
-                # Nodes don't need openshift_public_hostname (#3), or openshift_schedulable (#5)
-                # etcd only needs hostname and node labes. doing the 'if not' above addresses both
-                # of these conditions at once, as the remainder are default values prev. defined.
-                del _ihd['openshift_node_labels']
+                _ihd.update({
+                    'openshift_node_group_name': 'node-config-infra',
+                    # 'openshift_node_groups':[{'name':'node-config-infra', 'labels':['node-role.kubernetes.io/infra=true']}],   
+                })
+                # del _ihd['openshift_node_labels']
+                
+            # elif 'node' not in self.openshift_config_category:
+            #     # Nodes don't need openshift_public_hostname (#3), or openshift_schedulable (#5)
+            #     # etcd only needs hostname and node labes. doing the 'if not' above addresses both
+            #     # of these conditions at once, as the remainder are default values prev. defined.
+            #     del _ihd['openshift_node_labels']
 
             hostdef = {node.PrivateDnsName: _ihd, 'ip_or_dns': node.PrivateDnsName}
             i += 1

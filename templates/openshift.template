@@ -207,6 +207,7 @@ Parameters:
     AllowedValues:
       - '3.7'
       - '3.9'
+      - '3.10'
   VPCCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -338,7 +339,7 @@ Rules:
 Mappings:
   AWSAMIRegionMap:
     AMI:
-      RHEL74HVM: RHEL-7.4_HVM_GA-20170808-x86_64-2-Hourly2-GP2
+      RHEL75HVM: RHEL-7.5_HVM_GA-20180322-x86_64-1-Hourly2-GP2
     eu-central-1:
       RHEL74HVM: ami-d74be5b8
     ap-southeast-2:
@@ -350,17 +351,19 @@ Mappings:
     us-east-2:
       RHEL74HVM: ami-cfdafaaa
     us-west-2:
-      RHEL74HVM: ami-9fa343e7
+      RHEL75HVM: ami-28e07e50
     ap-northeast-1:
       RHEL74HVM: ami-30ef0556
   LinuxAMINameMap:
     Redhat-Enterprise-Linux-7:
-      Code: RHEL74HVM
+      Code: RHEL75HVM
   OpenshiftVersionMap:
     '3.7':
       AnsiblePlaybookGitRepoTag: 3.7.58-1
     '3.9':
       AnsiblePlaybookGitRepoTag: 3.9.35-1
+    '3.10':
+      AnsiblePlaybookGitRepoTag: 3.10.27-2    
 Conditions:
   GovCloudCondition: !Equals
     - !Ref 'AWS::Region'
@@ -426,6 +429,9 @@ Conditions:
   Is39: !Equals
     - !Ref 'OpenshiftContainerPlatformVersion'
     - '3.9'
+  Is310: !Equals
+    - !Ref 'OpenshiftContainerPlatformVersion'
+    - '3.10'
   CustomClusterName: !Not
     - !Equals
       - !Ref ClusterName
@@ -1165,7 +1171,7 @@ Resources:
       ImageId: !FindInMap
         - AWSAMIRegionMap
         - !Ref 'AWS::Region'
-        - RHEL74HVM
+        - RHEL75HVM
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
@@ -1241,7 +1247,7 @@ Resources:
       ImageId: !FindInMap
         - AWSAMIRegionMap
         - !Ref 'AWS::Region'
-        - RHEL74HVM
+        - RHEL75HVM
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
@@ -1323,7 +1329,7 @@ Resources:
       ImageId: !FindInMap
         - AWSAMIRegionMap
         - !Ref 'AWS::Region'
-        - RHEL74HVM
+        - RHEL75HVM
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
@@ -1720,7 +1726,7 @@ Resources:
       ImageId: !FindInMap
         - AWSAMIRegionMap
         - !Ref 'AWS::Region'
-        - RHEL74HVM
+        - RHEL75HVM
       IamInstanceProfile: !Ref 'SetupRoleProfile'
       Tags:
         - Key: Name

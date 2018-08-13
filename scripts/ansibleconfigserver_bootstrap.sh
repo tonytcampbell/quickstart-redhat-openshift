@@ -8,7 +8,7 @@ qs_retry_command 25 aws s3 cp ${QS_S3URI}scripts/redhat_ose-register-${OCP_VERSI
 chmod 755 ~/redhat_ose-register.sh
 qs_retry_command 20 ~/redhat_ose-register.sh ${RH_USER} ${RH_PASS} ${RH_POOLID}
 
-yum -y install ansible-2.4.6.0 yum-versionlock
+yum -y install ansible-2.6.2-1.el7 yum-versionlock
 sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
 yum versionlock add ansible
 yum repolist | grep OpenShift
@@ -50,7 +50,8 @@ echo openshift_master_console_port=443 >> /tmp/openshift_inventory_userdata_vars
 
 yum -y install wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct
 yum -y update
-yum -y install atomic-openshift-utils
+# yum -y install atomic-openshift-utils
+yum -y install openshift-ansible
 yum -y install atomic-openshift-excluder atomic-openshift-docker-excluder
 qs_retry_command 10 yum install -y https://s3-us-west-1.amazonaws.com/amazon-ssm-us-west-1/latest/linux_amd64/amazon-ssm-agent.rpm
 systemctl start amazon-ssm-agent
@@ -85,6 +86,9 @@ sed -i 's/#pipelining = False/pipelining = True/g' /etc/ansible/ansible.cfg
 sed -i 's/#log_path/log_path/g' /etc/ansible/ansible.cfg
 sed -i 's/#stdout_callback.*/stdout_callback = json/g' /etc/ansible/ansible.cfg
 sed -i 's/#deprecation_warnings = True/deprecation_warnings = False/g' /etc/ansible/ansible.cfg
+# TC CHANGE
+# Do some search and replace
+# echo -e  '    openshift_master_identity_providers: [{"name": "htpasswd_auth", "login": "true", "challenge": "true", "kind": "HTPasswdPasswordIdentityProvider"}]' >> /etc/ansible/hosts
 
 qs_retry_command 50 ansible -m ping all
 
@@ -92,6 +96,9 @@ ansible-playbook /usr/share/ansible/openshift-ansible/bootstrap_wrapper.yml > /v
 if [ "${OCP_VERSION}" == "3.7" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml >> /var/log/bootstrap.log
 elif [ "${OCP_VERSION}" == "3.9" ]; then
+    ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
+    ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
+elif [ "${OCP_VERSION}" == "3.10" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
 fi

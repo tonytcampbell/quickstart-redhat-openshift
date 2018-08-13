@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import ast
 import subprocess
 import tempfile
 import shlex
@@ -7,6 +8,7 @@ import time
 import sys
 from aws_openshift_quickstart.utils import *
 from aws_openshift_quickstart.logger import LogUtil
+
 
 LogUtil.set_log_handler('/var/log/openshift-quickstart-scaling.log')
 log = LogUtil.get_root_logger()
@@ -32,8 +34,10 @@ def generate_inital_inventory_nodes(write_hosts_to_temp=False):
                 if l_stripped == '':
                     continue
                 k, v = l_stripped.split('=', 1)
-                if ((v[0] == "'") and (v[-0] == "'")) or ((v[0] == '"') and (v[-0] == '"')):
+                if ((v[0] == "'") and (v[-1] == "'")) or ((v[0] == '"') and (v[-1] == '"')):
                     v = v[1:-1]
+                if((v[0] == "[") and (v[-1] == "]")):
+                    v = ast.literal_eval(v)
                 _vs[k] = v
             except ValueError:
                 log.error("I ran into trouble trying to unpack this value: \"{}\".".format(l))
