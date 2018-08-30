@@ -8,7 +8,12 @@ qs_retry_command 25 aws s3 cp ${QS_S3URI}scripts/redhat_ose-register-${OCP_VERSI
 chmod 755 ~/redhat_ose-register.sh
 qs_retry_command 20 ~/redhat_ose-register.sh ${RH_USER} ${RH_PASS} ${RH_POOLID}
 
-yum -y install ansible-2.6.2-1.el7 yum-versionlock
+
+# TODO: make this immutable
+# yum -y install ansible-2.6.3-1.el7ae yum-versionlock
+curl  --retry 0  -Ls https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.2-1.el7.ans.noarch.rpm -o ansible-2.6.2-1.el7.ans.noarch.rpm
+yum -y localinstall ansible-2.6.2-1.el7.ans.noarch.rpm
+yum -y install yum-versionlock
 sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
 yum versionlock add ansible
 yum repolist | grep OpenShift
@@ -49,7 +54,11 @@ echo openshift_master_api_port=443 >> /tmp/openshift_inventory_userdata_vars
 echo openshift_master_console_port=443 >> /tmp/openshift_inventory_userdata_vars
 
 yum -y install wget git net-tools bind-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct
+# FIX: Update is failing on Error unpacking rpm package python2-urllib3-1.21.1-1.el7.noarch. Fix is to pip uninstall urllib3 and let rpm install it
+# https://bugzilla.redhat.com/show_bug.cgi?id=1187057
+pip uninstall -y urllib3
 yum -y update
+
 # yum -y install atomic-openshift-utils
 yum -y install openshift-ansible
 yum -y install atomic-openshift-excluder atomic-openshift-docker-excluder
@@ -62,6 +71,10 @@ tar -zxf openshift-ansible.tar.gz
 rm -rf /usr/share/ansible
 mkdir -p /usr/share/ansible
 mv openshift-ansible-* /usr/share/ansible/openshift-ansible
+mkdir -p /usr/share/ansible/openshift-ansible/inventory/group_vars
+echo "openshift_disable_check: disk_availability,memory_availability,docker_storage" >> /usr/share/ansible/openshift-ansible/inventory/group_vars/OSEv3.yml
+#chgrp -R wheel /usr/share/ansible
+#chmod g+s /usr/share/ansible
 
 yum -y install atomic-openshift-excluder atomic-openshift-docker-excluder
 atomic-openshift-excluder unexclude
@@ -86,11 +99,10 @@ sed -i 's/#pipelining = False/pipelining = True/g' /etc/ansible/ansible.cfg
 sed -i 's/#log_path/log_path/g' /etc/ansible/ansible.cfg
 sed -i 's/#stdout_callback.*/stdout_callback = json/g' /etc/ansible/ansible.cfg
 sed -i 's/#deprecation_warnings = True/deprecation_warnings = False/g' /etc/ansible/ansible.cfg
-# TC CHANGE
-# Do some search and replace
-# echo -e  '    openshift_master_identity_providers: [{"name": "htpasswd_auth", "login": "true", "challenge": "true", "kind": "HTPasswdPasswordIdentityProvider"}]' >> /etc/ansible/hosts
-
+sed -i 's/#ssh_args.*/ssh_args = -o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=120m -o ControlPath=\/tmp\/ansible-ssh-%h-%p-%r/g' /etc/ansible/ansible.cfg
 qs_retry_command 50 ansible -m ping all
+
+
 
 ansible-playbook /usr/share/ansible/openshift-ansible/bootstrap_wrapper.yml > /var/log/bootstrap.log
 if [ "${OCP_VERSION}" == "3.7" ]; then
@@ -99,6 +111,9 @@ elif [ "${OCP_VERSION}" == "3.9" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
 elif [ "${OCP_VERSION}" == "3.10" ]; then
+    ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
+    ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
+elif [ "${OCP_VERSION}" == "3.11" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
 fi
@@ -110,6 +125,14 @@ qs_retry_command 10 yum install -y atomic-openshift-clients
 AWSSB_SETUP_HOST=$(head -n 1 /tmp/openshift_initial_masters)
 mkdir -p ~/.kube/
 scp $AWSSB_SETUP_HOST:~/.kube/config ~/.kube/config
+
+# Maually install OLM on 3.10 after cluster is up
+if [ "${OCP_VERSION}" == "3.10" ]; then
+    aws s3 cp ${QS_S3URI}scripts/integreatly_bootstrap.sh ./integreatly_bootstrap.sh
+    chmod +x /integreatly_bootstrap.sh
+    qs_retry_command 2 /integreatly_bootstrap.sh
+fi
+
 
 if [ "${ENABLE_AWSSB}" == "Enabled" ]; then
     qs_retry_command 10 yum install -y wget

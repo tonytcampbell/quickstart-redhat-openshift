@@ -105,6 +105,9 @@ def generate_inital_inventory_nodes(write_hosts_to_temp=False):
 
     # Masters as nodes for the purposes of software installation.
     _children['nodes']['hosts'].update(_children['masters']['hosts'])
+    # TC Add - Infra/etcd as nodes too ???
+    # _children['nodes']['hosts'].update(_children['etcd']['hosts'])
+    
 
     # Pushing the var subgroups to the 'vars' variable.
     _vars.update(_pre_defined_vars)
