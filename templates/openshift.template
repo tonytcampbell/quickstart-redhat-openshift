@@ -366,7 +366,7 @@ Mappings:
     '3.10':
       AnsiblePlaybookGitRepoTag: 3.10.41-1
     '3.11':
-      AnsiblePlaybookGitRepoTag: 3.11.0-0.20.0    
+      AnsiblePlaybookGitRepoTag: 3.11.0-0.25.0    
 Conditions:
   GovCloudCondition: !Equals
     - !Ref 'AWS::Region'
@@ -813,6 +813,38 @@ Resources:
             - !Ref ClusterName
             - !Sub '${AWS::StackName}-${AWS::Region}'
           Value: owned
+  AWSEFSFileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties: 
+      Encrypted: false
+      FileSystemTags:
+        - Key: Cluster
+          Value: !Ref 'SubDomainPrefix'
+        - Key: Name
+          Value: !Ref 'SubDomainPrefix'
+      PerformanceMode: "generalPurpose"
+      ThroughputMode: "bursting"
+  AWSEFSMountPoint1:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref 'AWSEFSFileSystem'
+      SecurityGroups:
+        - !Ref "OpenShiftSecurityGroup"
+      SubnetId: !Ref "PrivateSubnet1ID"
+  AWSEFSMountPoint2:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref 'AWSEFSFileSystem'
+      SecurityGroups:
+        - !Ref "OpenShiftSecurityGroup"
+      SubnetId: !Ref "PrivateSubnet2ID"
+  AWSEFSMountPoint3:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref 'AWSEFSFileSystem'
+      SecurityGroups:
+        - !Ref "OpenShiftSecurityGroup"
+      SubnetId: !Ref "PrivateSubnet3ID"
   SetupRole:
     Type: AWS::IAM::Role
     Properties:
@@ -1588,12 +1620,12 @@ Resources:
         - InstancePort: '443'
           InstanceProtocol: !If
             - UseCustomDomain
-            - SSL
+            - TCP
             - TCP
           LoadBalancerPort: '443'
           Protocol: !If
             - UseCustomDomain
-            - SSL
+            - TCP
             - TCP
           SSLCertificateId: !If
             - UseCustomDomain
