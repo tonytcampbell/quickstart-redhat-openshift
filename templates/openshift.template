@@ -878,6 +878,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
         - arn:aws:iam::aws:policy/AWSCloudFormationReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess
       Policies:
         - PolicyName: aws-quick-start-s3-policy
           PolicyDocument:
