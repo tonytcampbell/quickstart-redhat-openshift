@@ -1820,6 +1820,7 @@ Resources:
             export AWS_STACKID=${AWS::StackId}
             export ENABLE_AWSSB=${AWSServiceBroker}
             export VPCID=${VPCID}
+            export INTEGREATLY_RELEASE_VERSION=${IntegreatlyReleaseVersion}
             yum install -y git
             git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git
             export P=/quickstart-linux-utilities/quickstart-cfn-tools.source
