@@ -1,24 +1,5 @@
 #! /bin/bash
 
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApSqj6PtADKst8wqvajo6lOd/1djW0stnEGll91Zdbre23GepAT6ms7S72aAamnoEykwCwqQgolSrROaxNao0W6oru2Tya6TvwmGxLmLX0fvvztV42Ru3NdxMv1XYCWNJbA/HXOWRsTHnQB5hZwDPzbn+EtcesGCvW8UpE5pNscMoeVsy9bfIXu70zSLN8tcxuq5NmK28MCIgyaq1jIxQS+XW7yDAkN5lnmw9rdmrNTXqLhKsc8av71G7M7VqYGutaa2OLToSymvwIRFscPIrKan7W4IGdLvfOVODUBmIqxkMH3vKYiCQwYbU+TGv4rnD9JkiGnL3j1+QqukHly3zRQ== >> ~/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDj4xOAezfEewGDEaCXLi3vOoFBaBVP7be3SZP1jnvR6J4FoJklvbgTxT+dqzPeV+kjWT8pEr8CLaJYgoqv2CE2RXSCy97VRatRSLBuz4ZbrMGdFs9qYeCv1oE1856XTpWu6t2RBWkJ6Z+A1Pjwlv1zXELL/c23jhDpWIpsVILMRcNOuGFgURmF0W2Nm7CZSq4DVJwmkhWnEDnWz2neVvCgMbAMiFQthfB2mqNBazdDE48Jxce0dEUFmnyqn71v5gAkXqptruq5T0j0dguRCyJ9ElqO2zZmfTjBDqTzGuA6l6Zr30ZDHukz+FThlylg2y30FfEU4yxkkWIvqFuSwxXCWwY6z9hWPH5HRIJ+82EDGKmmVCg3UkFUZ2qiEOLoHi0KUWex7/ylRzoeEFCLmd9+GeCMgZ85Z2rPWFln3aU+zK7o4fiS4fGMqB4F112fdGAwCMGQLfcXi40GdjKuVXe1uY6A7snJBrt0XNgEynp71vJNnl6Ka5JfEtDRPaBZw8zs6nyB+gwjtr2v+Fbsti5crYGXh5orQbdibCSJgWrlIz8CY1P4BwPCdaaZIz9N5MyOU0BMMrAG7MiNUB2jJsPi7s+iBfGh1dx2bSfB8tmd5Flq7fzVt1YIPiBl5PQceys6yGva5SUWh2lhCztWU5amdmJA5aKLYc8Ito0iiRFPEw== >> ~/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDre30bElm6g8us2F71sCdExSazXdHYyfyZIPIRi+2LpjokETQR4urZ8KqpJ0tTM2LxW4RQdNd4w8V3KsvCOTm3L+PKq4Ub7HXdz41KbHIeE0P6uZQPUDET6TTguJEYTXOVC5XP6Seie334IXPbFE/RPDBkrjbTLZUK2fNR1CbkHHL5UpIgcG0gMiseyqNjh9qtwxFcp/O3JbfP9U5FJPr41YNRA2vWAyZ0uJCv9RQc2PO58ygukOEcsuWl/DAAg3WxCc3+PsNjxvd4Zz1uxKTiNZSWOHCzMqqshCVh9MPjznXUMS6JLZyUbkJkm2EUCm8KciNPclc0o0JJ6xfRoe552g3qJIlhlf30cujKZWr0iUfNyppC4hEf9U8QSXi5k2mvkvRTd94vML4GTCRczcLUkDiyyb7KJU623rJI6JFwZ2uYF8NKoTIW4N0X9cNiLW9keYTd/0x+ideGhviylj83IhMv/GsQ9jBESCcCnfa2yRaVTBLSqGmrRlQSL7pSDdKMtb4qn9eUHQXW3zY5Mfbk6y5SYlGOhIunYYdsx8qJfkO4veHLmY0Un2wo7cZF/d4K3+dyiOuE3ed5uj8zwNDG5lIn5ICHvzDl2xzOcmXPH+ahWjluCRqW0EzwseFvTBZ2bixnDb68ONHw9StT9WlZkW0cwJ1nUVWAkqQdeykeXw== >> ~/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDrjqqA+f0W0EAjQ5Pxh48GVLByUqwyw8yPExSXDIK8WDHK0XmpPhDq4To+mmDg+BY+cdJo16KfgAqRLh1IgCrjMjPZoJOQxisyM+rJl5E980WI3WTs0DGRf71Fhr3T8aTyLPMv/K/vwX2ttzb8nFAKoIj9B3YARvDhvXP6TtSYrwxvtXfmKgaUDynse5CpTZMuck0SmObJRJAsITfPx5kvJDYzwRzuvG1dQtsTnUb76jEME4iHuX2sZSXWt8qG9JKWj4upLp0MJHSp065A3rw/DdfQgg4M2Xo6/pNIVi0fmFX7c9vvRrQFd0vh7BAaYypD8QlN9/cmKTyZnfY2DRGj dmartin@feedhenry >> /home/ec2-user/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6cWM+SWRuHIJtkS9zgGSR3MTh8QbotznsdyShcpWXu4I9fvHFTTuLPrbWITeQaxzjAbdbWxH/44l/qP+6UX9uADekQRA1bBKy5wdoljgYQApLT3kl/sInKX3fsaENFr2mofVgeE5N/pobXkjhD4r6uHjXQcL1qx5qTY9/12RgfCszYH9BJRHUemZxlJ6jx+YJv6eELjm6Ekn4owkJkkx72X5BoBmdlAyjjrpjm9JZMt5RRsErPcFzA609K4jU3Jvo5mP9jhxfjts4D/X4w2cFo33QyvS64mLD0cxNuGTiodgTHNS4Dav1CZtVIn409AtgPOYGJnilo+0mIVe5NDfrQ== jasonmadigan@rh >> /home/ec2-user/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA3CtbRsg94m1DypVJkuJcqUwTmcLw5pACYeoHWFKjxP0O9aPOoFhgAqqNuOnR171gL7cBSyzqc63ylV9S3iC9Nr2bvPXN9vK9BFP3BDYeVBTLozVZGVMTrL4wlw96/Stv36Z2SK97Tw/3ZWLdig7Pa2vuuBcI6mVldFYQrMKNGWvBNmeMXtEtSxbd8NndYpSbAkYUPE6/yuBiG7+fUcGkkCma9Oi9V/X6IUbfiYB3JMk12KmPCMoHCGvkFrTRT1jqlzkKhk8lAnXbvEY1cO+2LcOBQMhdVJ3/xEPAtGzVxN6nkF3K3pnQ3msDV7AB09OUVGrkUygPjV0gezxXEJRm5w== pmccarthy@feedhenry >> /home/ec2-user/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6Ko05EVvPtHAysTDoJtR63Tq3ssmNVDLj4fUttcQziAubWnbgcrxapOBUuLuSgJMJ3tNS/BBgyvOc8Osopj1o6qX0anUssgV2Flpgft92sDxrY16LLasU6eYmzUGOBmtFsrcgK9MXEo0xXwIupZ+Sl07R+x35UScNVGPRz5sZS+Xfd8pQW8i4LuyQc+HQIGqJhn8ciGerCx6Kor/IFxvBMc7DqSJ/ZWZVDbOXHAhrLlVsVcRk3k3nrw10zip7IVGB8xBYYiZgrSl5tX7U367ueoB5izCufk6VK8sEZ4TlRYzlA1/0rcthBhLjgTq/dzpXQQF3Mn1+z8Sno371uSKh aidenkeating@Aidens-MacBook-Pro.local >> /home/ec2-user/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAydBTYSit/ThkUtHnfw5VEZN33XjHThtnK3k+hXoBtcdqYtNgEEeazBFILDPuZLAHABT4doeqjSIu+Q97EvPAr0DhQSTsXRB7ajnv+DLY9mrnDx7uA8RQr27rndn/mXLLjHxwExEXRoiHS+anJY/INEMnAGR9r73A+7MlYsu5nJNdoPjESz2t0gi46eiRhLlJELeog2erCraAinOHiuxAsKBa2UHctIIeqS6g2AquvQOEJnPVWLKRBkflGbU0CYGo2CbA/uT8i/a114KNRb4Y30pPNll6re6RU2UNJUkXf/DiRCsY4EBHkVQLigsJ3Q2h8Q4kNQn0HfNorZH8b5R7+w== jfrizelle@DELL-32DXN4J >> /home/ec2-user/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAz6oDJPFJfJ47/eBVMOZxuxf2+aBIfj7/aerYxW99t0mEbnd/VqLOdwKw8gkQ9S359r4iROH80brIAdEbMCPKf3lGGiz83KJl3E1zlp6kwRIS/pehIZ7cpbqP3GyBvEWJGDByKP/lHWCS0EG9dMzZ+0Xh11KqqdMuFEhrubcUSDfNVFE20psCdJ9rE5sPZGgNadIdyzaGryc3Q+bzZso9cWw+WqblL6CeI7FBYyLUQPYe0XQNfUbVw03DMkPeRqCnbiJVY5Tm6HzGVAoBsau1GQadMCAErgfAHInrPIufZQ+PjIzOiPfQL8QsBMSZhFTWhYOe1g47R3C8W9R64aINKQ== jsarnovs@redhat.com >> /home/ec2-user/.ssh/authorized_keys
-echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvj6j+WaucoSyv2/mB0ukZgv60LHnnwh0BXEuQotF6fsIUnYVk19wPyo4UU4G4afsTx4RIb7+qPfwc6TSt84VbdPCDGbeFDzvS261kX5sGTqgufsk0Hq1PbwnJxlIOMrHXAUsV10KbBK13R68+hlcMNVkzJW06jsfUEaD+6oWKhRkjj1vP9tbO9Zl/LdZUgpV74dKTkyGnZ2zv8RS17p0HDwa6qEWpabSsbR5sOZM8W2ysV7Tf5QT3j5P51PaQFbkJc3Z9E+s5S4tzA4ypmbOxIQTTKLr+Q7xEydcRzIMhYq10kjhrsUqC6uwj/4a2bt6PgkyNya3l0ci4Ksv2oHt9Q== trepel@redhat.com >> /home/ec2-user/.ssh/authorized_keys
-
-CURRENT_OP_FRAMEWORK_VERSION=https://github.com/operator-framework/operator-lifecycle-manager/archive/0.6.0.tar.gz
-curl  --retry 5  -Ls ${CURRENT_OP_FRAMEWORK_VERSION} -o operator-framework.tar.gz
-tar -zxf operator-framework.tar.gz
-sudo rm -rf /usr/share/opframework
-sudo mkdir -p /usr/share/opframework
-sudo mv operator-lifecycle-manager-*/* /usr/share/opframework/
-sudo kubectl apply -f /usr/share/opframework/deploy/upstream/manifests/0.4.0
-
 # Install Integreatly
 MASTER_NODES=$(oc get nodes | grep master | awk {'print $1'})
 git clone --branch ${INTEGREATLY_RELEASE_VERSION} https://github.com/integr8ly/installation.git /tmp/integreatly
@@ -26,3 +7,13 @@ pushd /tmp/integreatly/evals
 perl -i -0pe "s/\[master\]\n127.0.0.1\n/\[master\]\n$MASTER_NODES\n/" inventories/hosts
 ansible-playbook -i inventories/hosts playbooks/install.yml
 popd
+
+if [ "${OCP_VERSION}" == "3.10" ]; then
+    CURRENT_OP_FRAMEWORK_VERSION=https://github.com/operator-framework/operator-lifecycle-manager/archive/0.6.0.tar.gz
+    curl  --retry 5  -Ls ${CURRENT_OP_FRAMEWORK_VERSION} -o operator-framework.tar.gz
+    tar -zxf operator-framework.tar.gz
+    sudo rm -rf /usr/share/opframework
+    sudo mkdir -p /usr/share/opframework
+    sudo mv operator-lifecycle-manager-*/* /usr/share/opframework/
+    sudo kubectl apply -f /usr/share/opframework/deploy/upstream/manifests/0.4.0
+fi
