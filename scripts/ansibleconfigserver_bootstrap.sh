@@ -2,17 +2,21 @@
 
 source ${P}
 
+# Inject Integreatly Keys
+aws s3 cp ${QS_S3URI}scripts/integreatly_keys.sh ./integreatly_keys.sh
+chmod +x /integreatly_keys.sh
+qs_retry_command 2 /integreatly_keys.sh
+
 qs_enable_epel &> /var/log/userdata.qs_enable_epel.log
 
 qs_retry_command 25 aws s3 cp ${QS_S3URI}scripts/redhat_ose-register-${OCP_VERSION}.sh ~/redhat_ose-register.sh
 chmod 755 ~/redhat_ose-register.sh
 qs_retry_command 20 ~/redhat_ose-register.sh ${RH_USER} ${RH_PASS} ${RH_POOLID}
 
+# NOTE: Doesn't work with Ansible 2.7 at the moment. TC - 16 Oct 2018
+curl  --retry 0  -Ls https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.3-1.el7.ans.noarch.rpm -o ansible-2.6.3-1.el7.ans.noarch.rpm
+yum -y localinstall ansible-2.6.3-1.el7.ans.noarch.rpm
 
-# TODO: make this immutable
-# yum -y install ansible-2.6.3-1.el7ae yum-versionlock
-curl  --retry 0  -Ls https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.6.2-1.el7.ans.noarch.rpm -o ansible-2.6.2-1.el7.ans.noarch.rpm
-yum -y localinstall ansible-2.6.2-1.el7.ans.noarch.rpm
 yum -y install yum-versionlock
 sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
 yum versionlock add ansible
@@ -65,7 +69,14 @@ yum -y install atomic-openshift-excluder atomic-openshift-docker-excluder
 qs_retry_command 10 yum install -y https://s3-us-west-1.amazonaws.com/amazon-ssm-us-west-1/latest/linux_amd64/amazon-ssm-agent.rpm
 systemctl start amazon-ssm-agent
 systemctl enable amazon-ssm-agent
-CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+# CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+if ["${OCP_VERSION}" == "3.9"]; then
+    CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+elif [ "${OCP_VERSION}" == "3.10" ]; then
+    CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+elif [ "${OCP_VERSION}" == "3.11" ]; then
+    CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/${OCP_ANSIBLE_RELEASE}.tar.gz
+fi
 curl  --retry 5  -Ls ${CURRENT_PLAYBOOK_VERSION} -o openshift-ansible.tar.gz
 tar -zxf openshift-ansible.tar.gz
 rm -rf /usr/share/ansible
@@ -126,12 +137,12 @@ AWSSB_SETUP_HOST=$(head -n 1 /tmp/openshift_initial_masters)
 mkdir -p ~/.kube/
 scp $AWSSB_SETUP_HOST:~/.kube/config ~/.kube/config
 
-# Maually install OLM on 3.10 after cluster is up
-if [ "${OCP_VERSION}" == "3.10" ]; then
-    aws s3 cp ${QS_S3URI}scripts/integreatly_bootstrap.sh ./integreatly_bootstrap.sh
-    chmod +x /integreatly_bootstrap.sh
-    qs_retry_command 2 /integreatly_bootstrap.sh
-fi
+# Install Integreatly
+# TODO: Make this configurable. 
+aws s3 cp ${QS_S3URI}scripts/integreatly_bootstrap.sh ./integreatly_bootstrap.sh
+chmod +x /integreatly_bootstrap.sh
+qs_retry_command 2 /integreatly_bootstrap.sh
+
 
 
 if [ "${ENABLE_AWSSB}" == "Enabled" ]; then

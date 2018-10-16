@@ -11,4 +11,4 @@ osm_default_node_selector='application_node=yes'
 openshift_clusterid=owned
 openshift_cloudprovider_kind=aws
 openshift_master_identity_providers='[{"name": "htpasswd_auth", "login": "true", "challenge": "true", "kind": "HTPasswdPasswordIdentityProvider"}]'
-openshift_node_groups='[{"name": "node-config-master", "labels": ["node-role.kubernetes.io/master=true","region=primary", "zone=default"]}, {"name": "node-config-infra", "labels": ["node-role.kubernetes.io/infra=true"]}, {"name": "node-config-compute", "labels": ["node-role.kubernetes.io/compute=true","application_node=yes","registry_node=yes","router_node=yes"], "edits": []}]'
+openshift_node_groups='[{"name": "node-config-master", "labels": ["node-role.kubernetes.io/master=true","region=primary", "zone=default"]}, {"name": "node-config-infra", "labels": ["node-role.kubernetes.io/infra=true"]}, {"name": "node-config-compute", "labels": ["node-role.kubernetes.io/compute=true","node-role.kubernetes.io/infra=true","application_node=yes","registry_node=yes","router_node=yes"], "edits": []}]'

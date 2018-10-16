@@ -632,7 +632,7 @@ class LocalASG(object):
                 _ihd.update({
                     'openshift_schedulable': 'true',
                     'openshift_node_group_name': 'node-config-master',
-                    # 'openshift_node_groups':[{'name':'node-config-master', 'labels':['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true','region=primary', 'zone=default']}],
+                    # 'openshift_node_groups':[{'name':'node-config-master', 'labels':['node-role.kubernetes.io/master=true','region=primary', 'zone=default']}],
                     # 'openshift_node_labels': {
                     #     'region': 'primary',
                     #     'zone': 'default'
@@ -643,12 +643,14 @@ class LocalASG(object):
                     _ihd['openshift_public_hostname'] = self.elb_name
             elif 'node' in self.openshift_config_category:
                 _ihd.update({
+                    'openshift_schedulable': 'true',
                     'openshift_node_group_name': 'node-config-compute', 
                     # 'openshift_node_groups':[{'name':'node-config-compute', 'labels':['node-role.kubernetes.io/compute=true','application_node=yes']}],       
                 })
             # elif 'etcd' in self.openshift_config_category:
             elif 'node' not in self.openshift_config_category:
                 _ihd.update({
+                    'openshift_schedulable': 'true',
                     'openshift_node_group_name': 'node-config-infra',
                     # 'openshift_node_groups':[{'name':'node-config-infra', 'labels':['node-role.kubernetes.io/infra=true']}],   
                 })
