@@ -1,11 +1,14 @@
 #! /bin/bash
 
 # Install Integreatly
-MASTER_NODES=$(oc get nodes | grep master | awk {'print $1'})
+MASTER_NODES=$(sudo oc get nodes | grep master | awk {'print $1'})
 git clone --branch ${INTEGREATLY_RELEASE_VERSION} https://github.com/integr8ly/installation.git /tmp/integreatly
 pushd /tmp/integreatly/evals
+# Modify hosts file to set ssh user to root
+perl -i -0pe "s/ec2-user/root/" inventories/hosts
+# Modify hosts file to dynamically set master nodes
 perl -i -0pe "s/\[master\]\n127.0.0.1\n/\[master\]\n$MASTER_NODES\n/" inventories/hosts
-ansible-playbook -i inventories/hosts playbooks/install.yml
+sudo ansible-playbook -i inventories/hosts playbooks/install.yml
 popd
 
 if [ "${OCP_VERSION}" == "3.10" ]; then
