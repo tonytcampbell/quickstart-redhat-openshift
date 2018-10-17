@@ -57,6 +57,10 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
           - OutputBucketName
+      - Label:
+          default: Integreatly Configuration
+        Parameters:
+          - IntegreatlyReleaseVersion
     ParameterLabels:
       KeyPairName:
         default: SSH Key Name
@@ -122,6 +126,8 @@ Metadata:
         default: Subdomain Prefix
       ClusterName:
         default: Cluster Name
+      IntegreatlyReleaseVersion:
+        default: Integreatly Branch to Deploy
 Parameters:
   KeyPairName:
     Description: Name of an existing EC2 key pair. All instances will launch with
@@ -327,6 +333,10 @@ Parameters:
   ClusterName:
     Default: ""
     Description: Custom cluster name for kubernetes.io/cluster/ tags, if left blank will use the stackname suffixed with the region
+    Type: String
+  IntegreatlyReleaseVersion:
+    Description: Integreatly version to deploy
+    Default: 'master'
     Type: String
 Rules:
   SubnetsInVPC:

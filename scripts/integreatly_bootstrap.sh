@@ -5,7 +5,7 @@ MASTER_NODES=$(oc get nodes | grep master | awk {'print $1'})
 git clone --branch ${INTEGREATLY_RELEASE_VERSION} https://github.com/integr8ly/installation.git /tmp/integreatly
 pushd /tmp/integreatly/evals
 perl -i -0pe "s/\[master\]\n127.0.0.1\n/\[master\]\n$MASTER_NODES\n/" inventories/hosts
-ansible-playbook -i inventories/hosts playbooks/install.yml
+ansible-playbook -i inventories/hosts playbooks/install.yml >> /var/log/integreatly_bootstrap.log
 popd
 
 if [ "${OCP_VERSION}" == "3.10" ]; then

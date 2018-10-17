@@ -56,6 +56,10 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
           - OutputBucketName
+      - Label:
+          default: Integreatly Configuration
+        Parameters:
+          - IntegreatlyReleaseVersion
     ParameterLabels:
       KeyPairName:
         default: SSH Key Name
@@ -117,6 +121,8 @@ Metadata:
         default: Route 53 Hosted Zone ID
       SubDomainPrefix:
         default: Subdomain Prefix
+      IntegreatlyReleaseVersion:
+        default: Integreatly Branch to Deploy
 Parameters:
   AvailabilityZones:
     Description: List of Availability Zones to use for the subnets in the VPC. Three
@@ -326,6 +332,10 @@ Parameters:
     Description: Enable Hawkular cluster metrics
     Type: String
     AllowedValues: [ Enabled, Disabled ]
+  IntegreatlyReleaseVersion:
+    Description: Integreatly version to deploy
+    Default: 'master'
+    Type: String
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
