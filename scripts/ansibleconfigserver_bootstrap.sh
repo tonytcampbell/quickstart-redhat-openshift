@@ -137,13 +137,33 @@ AWSSB_SETUP_HOST=$(head -n 1 /tmp/openshift_initial_masters)
 mkdir -p ~/.kube/
 scp $AWSSB_SETUP_HOST:~/.kube/config ~/.kube/config
 
+# Configure EFS Storage Class
+# Retrieve EFS File System ID
+EFS_FILESYSTEM_ID=$(aws efs describe-file-systems --region ${AWS_REGION} --query "FileSystems[?Name==\`${SubDomainPrefix}\`].[FileSystemId]" --output text)
+# Mount File System locally to create PV directory
+sudo yum install -y nfs-utils
+mkdir /home/ec2-user/efs
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${EFS_FILESYSTEM_ID}.efs.${AWS_REGION}.amazonaws.com:/ /home/ec2-user/efs
+sudo mkdir -p /home/ec2-user/efs/data/persistentvolumes
+sudo umount /home/ec2-user/efs
+
+# Run ansible playbook for EFS provisioner setup
+sudo ansible-playbook -v -i /etc/ansible/hosts \
+    /usr/share/ansible/openshift-ansible/playbooks/openshift-provisioners/config.yml \
+   -e openshift_provisioners_install_provisioners=True \
+   -e openshift_provisioners_efs=True \
+   -e openshift_provisioners_efs_fsid=${EFS_FILESYSTEM_ID} \
+   -e openshift_provisioners_efs_region=${AWS_REGION} \
+   -e openshift_provisioners_efs_path=/data/persistentvolumes
+
+# Create EFS Storageclass
+sudo oc create -f efs_storageclass.yml
+
 # Install Integreatly
 # TODO: Make this configurable. 
 aws s3 cp ${QS_S3URI}scripts/integreatly_bootstrap.sh ./integreatly_bootstrap.sh
 chmod +x /integreatly_bootstrap.sh
 qs_retry_command 2 /integreatly_bootstrap.sh
-
-
 
 if [ "${ENABLE_AWSSB}" == "Enabled" ]; then
     qs_retry_command 10 yum install -y wget
