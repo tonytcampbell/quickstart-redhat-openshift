@@ -60,6 +60,7 @@ Metadata:
       - Label:
           default: Integreatly Configuration
         Parameters:
+          - IntegreatlyInstall
           - IntegreatlyReleaseVersion
     ParameterLabels:
       KeyPairName:
@@ -126,6 +127,8 @@ Metadata:
         default: Subdomain Prefix
       ClusterName:
         default: Cluster Name
+      IntegreatlyInstall:
+        default: Automatically Install Integreatly after cluster is up
       IntegreatlyReleaseVersion:
         default: Integreatly Branch to Deploy
 Parameters:
@@ -334,6 +337,13 @@ Parameters:
     Default: ""
     Description: Custom cluster name for kubernetes.io/cluster/ tags, if left blank will use the stackname suffixed with the region
     Type: String
+  IntegreatlyInstall:
+    Default: Enabled
+    Description: Enable Integreatly Installation
+    Type: String
+    AllowedValues:
+      - Enabled
+      - Disabled
   IntegreatlyReleaseVersion:
     Description: Integreatly version to deploy
     Default: 'master'
@@ -394,7 +404,7 @@ Mappings:
     '3.10':
       AnsiblePlaybookGitRepoTag: 3.10.41-1
     '3.11':
-      AnsiblePlaybookGitRepoTag: v3.11.0    
+      AnsiblePlaybookGitRepoTag: v3.11.25-1    
 Conditions:
   GovCloudCondition: !Equals
     - !Ref 'AWS::Region'
@@ -1831,6 +1841,8 @@ Resources:
             export ENABLE_AWSSB=${AWSServiceBroker}
             export VPCID=${VPCID}
             export INTEGREATLY_RELEASE_VERSION=${IntegreatlyReleaseVersion}
+            export INTEGREATLY_INSTALL=${IntegreatlyInstall}
+            export SUBDOMAIN_PREFIX=${SubDomainPrefix}
             yum install -y git
             git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git
             export P=/quickstart-linux-utilities/quickstart-cfn-tools.source

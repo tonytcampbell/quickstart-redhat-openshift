@@ -59,6 +59,7 @@ Metadata:
       - Label:
           default: Integreatly Configuration
         Parameters:
+          - IntegreatlyInstall
           - IntegreatlyReleaseVersion
     ParameterLabels:
       KeyPairName:
@@ -121,6 +122,8 @@ Metadata:
         default: Route 53 Hosted Zone ID
       SubDomainPrefix:
         default: Subdomain Prefix
+      IntegreatlyInstall:
+        default: Automatically Install Integreatly after cluster is up
       IntegreatlyReleaseVersion:
         default: Integreatly Branch to Deploy
 Parameters:
@@ -332,6 +335,13 @@ Parameters:
     Description: Enable Hawkular cluster metrics
     Type: String
     AllowedValues: [ Enabled, Disabled ]
+  IntegreatlyInstall:
+    Default: Enabled
+    Description: Enable Integreatly Installation
+    Type: String
+    AllowedValues:
+      - Enabled
+      - Disabled
   IntegreatlyReleaseVersion:
     Description: Integreatly version to deploy
     Default: 'master'
@@ -393,6 +403,8 @@ Resources:
         SubDomainPrefix: !Ref 'SubDomainPrefix'
         HawkularMetrics: !Ref 'HawkularMetrics'
         ClusterName: !Sub '${AWS::StackName}-${AWS::Region}'
+        IntegreatlyInstall: !Ref 'IntegreatlyInstall'
+        IntegreatlyReleaseVersion: !Ref 'IntegreatlyReleaseVersion'
 Outputs:
   OpenShiftUI:
     Description: The URL OpenShiftUI
