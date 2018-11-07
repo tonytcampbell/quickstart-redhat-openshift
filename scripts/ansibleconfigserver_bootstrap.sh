@@ -7,6 +7,11 @@ aws s3 cp ${QS_S3URI}scripts/integreatly_keys.sh ./integreatly_keys.sh
 chmod +x /integreatly_keys.sh
 qs_retry_command 2 /integreatly_keys.sh
 
+# Let's Encrypt TLS Cert Generation
+aws s3 cp ${QS_S3URI}scripts/letsencrypt.sh ./letsencrypt.sh
+chmod +x /letsencrypt.sh
+qs_retry_command 1 /letsencrypt.sh
+
 qs_enable_epel &> /var/log/userdata.qs_enable_epel.log
 
 qs_retry_command 25 aws s3 cp ${QS_S3URI}scripts/redhat_ose-register-${OCP_VERSION}.sh ~/redhat_ose-register.sh
@@ -150,13 +155,15 @@ if [ "${INTEGREATLY_INSTALL}" == "Enabled" ]; then
     sudo umount /home/ec2-user/efs
 
     # Run ansible playbook for EFS provisioner setup
-    sudo ansible-playbook -v -i /etc/ansible/hosts \
+    sudo ansible-playbook -vvv -i /etc/ansible/hosts \
         /usr/share/ansible/openshift-ansible/playbooks/openshift-provisioners/config.yml \
     -e openshift_provisioners_install_provisioners=True \
     -e openshift_provisioners_efs=True \
     -e openshift_provisioners_efs_fsid=${EFS_FILESYSTEM_ID} \
     -e openshift_provisioners_efs_region=${AWS_REGION} \
-    -e openshift_provisioners_efs_path=/data/persistentvolumes
+    -e openshift_provisioners_efs_path=/data/persistentvolumes \
+    -e openshift_provisioners_efs_aws_access_key_id=AKIAJHVWIMUAGOHTKLLA \
+    -e openshift_provisioners_efs_aws_secret_access_key=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
 
     # Create EFS Storageclass
     aws s3 cp ${QS_S3URI}scripts/efs_storageclass.yml efs_storageclass.yml
