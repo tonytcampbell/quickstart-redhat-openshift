@@ -12,4 +12,7 @@ openshift_clusterid=owned
 openshift_cloudprovider_kind=aws
 openshift_master_identity_providers='[{"name": "htpasswd_auth", "login": "true", "challenge": "true", "kind": "HTPasswdPasswordIdentityProvider"}]'
 openshift_node_groups='[{"name": "node-config-master", "labels": ["node-role.kubernetes.io/master=true","region=primary", "zone=default"]}, {"name": "node-config-infra", "labels": ["node-role.kubernetes.io/infra=true"]}, {"name": "node-config-compute", "labels": ["node-role.kubernetes.io/compute=true","node-role.kubernetes.io/infra=true","application_node=yes","registry_node=yes","router_node=yes"], "edits": []}]'
+openshift_logging_install_logging: true
+openshift_logging_es_nodeselector: {'node-role.kubernetes.io/infra': 'true'}
+openshift_logging_es_memory_limit: 8Gi
 openshift_hosted_router_certificate={"certfile": "/home/ec2-user/certs/cert.pem", "keyfile": "/home/ec2-user/certs/privkey.pem", "cafile": "/home/ec2-user/certs/chain.pem"}
