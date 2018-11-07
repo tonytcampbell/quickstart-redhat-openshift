@@ -7,6 +7,11 @@ aws s3 cp ${QS_S3URI}scripts/integreatly_keys.sh ./integreatly_keys.sh
 chmod +x /integreatly_keys.sh
 qs_retry_command 2 /integreatly_keys.sh
 
+# Let's Encrypt TLS Cert Generation
+aws s3 cp ${QS_S3URI}scripts/letsencrypt.sh ./letsencrypt.sh
+chmod +x /letsencrypt.sh
+qs_retry_command 1 /letsencrypt.sh
+
 qs_enable_epel &> /var/log/userdata.qs_enable_epel.log
 
 qs_retry_command 25 aws s3 cp ${QS_S3URI}scripts/redhat_ose-register-${OCP_VERSION}.sh ~/redhat_ose-register.sh
