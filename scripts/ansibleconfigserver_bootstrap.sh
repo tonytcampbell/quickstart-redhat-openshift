@@ -7,6 +7,11 @@ aws s3 cp ${QS_S3URI}scripts/integreatly_keys.sh ./integreatly_keys.sh
 chmod +x /integreatly_keys.sh
 qs_retry_command 2 /integreatly_keys.sh
 
+# Let's Encrypt TLS Cert Generation
+aws s3 cp ${QS_S3URI}scripts/letsencrypt.sh ./letsencrypt.sh
+chmod +x /letsencrypt.sh
+qs_retry_command 1 /letsencrypt.sh
+
 qs_enable_epel &> /var/log/userdata.qs_enable_epel.log
 
 qs_retry_command 25 aws s3 cp ${QS_S3URI}scripts/redhat_ose-register-${OCP_VERSION}.sh ~/redhat_ose-register.sh
@@ -69,14 +74,14 @@ yum -y install atomic-openshift-excluder atomic-openshift-docker-excluder
 qs_retry_command 10 yum install -y https://s3-us-west-1.amazonaws.com/amazon-ssm-us-west-1/latest/linux_amd64/amazon-ssm-agent.rpm
 systemctl start amazon-ssm-agent
 systemctl enable amazon-ssm-agent
-# CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
-if ["${OCP_VERSION}" == "3.9"]; then
-    CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
-elif [ "${OCP_VERSION}" == "3.10" ]; then
-    CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
-elif [ "${OCP_VERSION}" == "3.11" ]; then
-    CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/${OCP_ANSIBLE_RELEASE}.tar.gz
-fi
+CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+# if ["${OCP_VERSION}" == "3.9"]; then
+#     CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+# elif [ "${OCP_VERSION}" == "3.10" ]; then
+#     CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/openshift-ansible-${OCP_ANSIBLE_RELEASE}.tar.gz
+# elif [ "${OCP_VERSION}" == "3.11" ]; then
+#     CURRENT_PLAYBOOK_VERSION=https://github.com/openshift/openshift-ansible/archive/${OCP_ANSIBLE_RELEASE}.tar.gz
+# fi
 curl  --retry 5  -Ls ${CURRENT_PLAYBOOK_VERSION} -o openshift-ansible.tar.gz
 tar -zxf openshift-ansible.tar.gz
 rm -rf /usr/share/ansible
@@ -123,10 +128,10 @@ elif [ "${OCP_VERSION}" == "3.9" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
 elif [ "${OCP_VERSION}" == "3.10" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
-    ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
+    ansible-playbook -vvv /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
 elif [ "${OCP_VERSION}" == "3.11" ]; then
     ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml >> /var/log/bootstrap.log
-    ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
+    ansible-playbook -vvv /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml >> /var/log/bootstrap.log
 fi
 
 ansible masters -a "htpasswd -b /etc/origin/master/htpasswd admin ${OCP_PASS}"
@@ -137,33 +142,12 @@ AWSSB_SETUP_HOST=$(head -n 1 /tmp/openshift_initial_masters)
 mkdir -p ~/.kube/
 scp $AWSSB_SETUP_HOST:~/.kube/config ~/.kube/config
 
-# Configure EFS Storage Class
-# Retrieve EFS File System ID
-EFS_FILESYSTEM_ID=$(aws efs describe-file-systems --region ${AWS_REGION} --query "FileSystems[?Name==\`${SubDomainPrefix}\`].[FileSystemId]" --output text)
-# Mount File System locally to create PV directory
-sudo yum install -y nfs-utils
-mkdir /home/ec2-user/efs
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${EFS_FILESYSTEM_ID}.efs.${AWS_REGION}.amazonaws.com:/ /home/ec2-user/efs
-sudo mkdir -p /home/ec2-user/efs/data/persistentvolumes
-sudo umount /home/ec2-user/efs
-
-# Run ansible playbook for EFS provisioner setup
-sudo ansible-playbook -v -i /etc/ansible/hosts \
-    /usr/share/ansible/openshift-ansible/playbooks/openshift-provisioners/config.yml \
-   -e openshift_provisioners_install_provisioners=True \
-   -e openshift_provisioners_efs=True \
-   -e openshift_provisioners_efs_fsid=${EFS_FILESYSTEM_ID} \
-   -e openshift_provisioners_efs_region=${AWS_REGION} \
-   -e openshift_provisioners_efs_path=/data/persistentvolumes
-
-# Create EFS Storageclass
-sudo oc create -f efs_storageclass.yml
-
-# Install Integreatly
-# TODO: Make this configurable. 
-aws s3 cp ${QS_S3URI}scripts/integreatly_bootstrap.sh ./integreatly_bootstrap.sh
-chmod +x /integreatly_bootstrap.sh
-qs_retry_command 2 /integreatly_bootstrap.sh
+if [ "${INTEGREATLY_INSTALL}" == "Enabled" ]; then
+    # Install Integreatly 
+    aws s3 cp ${QS_S3URI}scripts/integreatly_bootstrap.sh ./integreatly_bootstrap.sh
+    chmod +x /integreatly_bootstrap.sh
+    qs_retry_command 2 /integreatly_bootstrap.sh
+fi
 
 if [ "${ENABLE_AWSSB}" == "Enabled" ]; then
     qs_retry_command 10 yum install -y wget
