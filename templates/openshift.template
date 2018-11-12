@@ -288,7 +288,7 @@ Parameters:
     AllowedValues:
       - '3'
   NumberOfNodes:
-    Default: '3'
+    Default: '9'
     Description: The desired capacity for the OpenShift node instances
     Type: Number
   OutputBucketName:
